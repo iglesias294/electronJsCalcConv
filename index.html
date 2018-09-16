@@ -18,12 +18,14 @@
       <div class="calc-btn column" id="calc-clear">AC</div>
       <div class="calc-btn column" id="calc-backspace">&#8676;</div>
       <div class="calc-btn calc-btn-operator column" id="calc-divide">&#247;</div>
+
     </div>
     <div class="row">
       <div class="calc-btn calc-btn-num column" id="calc-seven">7</div>
       <div class="calc-btn calc-btn-num column" id="calc-eight">8</div>
       <div class="calc-btn calc-btn-num column" id="calc-nine">9</div>
       <div class="calc-btn calc-btn-operator column" id="calc-multiply">x</div>
+
     </div>
     <div class="row">
       <div class="calc-btn calc-btn-num column" id="calc-four">4</div>
@@ -41,8 +43,12 @@
       <div class="calc-btn calc-btn-num column" id="calc-zero">0</div>
       <div class="calc-btn column" id="calc-decimal">.</div>
       <div class="calc-btn calc-btn-operator column" id="calc-equals">=</div>
-
     </div>
+  </div>
+  <div id="converter-parent">
+    <div class="column" id="dollarBox">$</div>
+    <div id="euroBox">EUR:</div>
+    <div id="btcBox">BTC: </div>
   </div>
 
   <script>
@@ -108,6 +114,8 @@
           displayVal = evaluation + '';
           displayValElement.innerText = displayVal;
           evalStringArray = [];
+          getFiatRates();
+          getCryptoRates();
         default:
           break;
       }
@@ -136,6 +144,12 @@
       pendingVal = undefined;
       evalStringArray = [];
       displayValElement.innerHTML = displayVal;
+      dollarBox.innerHTML = '';
+      euroBox.innerHTML = '';
+      btcBox.innerHTML = '';
+      dollarBox.innerHTML += `USD: ${displayVal}`;
+      euroBox.innerHTML += `EUR: ${displayVal}`;
+      btcBox.innerHTML += `BTC: ${displayVal}`;
     }
     backspaceBtn.onclick = () => {
       let lengthOfDisplayVal = displayVal.length;
@@ -152,6 +166,46 @@
         displayVal.innerText = displayVal;
       }
     }
+
+
+
+    // VERSION ONE
+    // When a calculation is made(= is pressed), 
+    //it should assume it is $ and show two corresponding conversions: EUROS and BITCOIN
+
+    //VERSION TWO will be prettier
+
+    //VERSION THREE will let you choose the base currency and up to five currencies to convert to
+
+
+
+    const dollarBox = document.getElementById('dollarBox');
+    const euroBox = document.getElementById('euroBox');
+    const btcBox = document.getElementById('btcBox');
+
+    const getFiatRates = async () => {
+      const res = await fetch('http://data.fixer.io/api/latest?access_key=5fa5f8877efc5ed39e23ed8b820d471d');
+      const json = await res.json()
+      const rates = json.rates;
+      console.log(rates)
+      dollarBox.innerHTML += displayVal;
+      euroBox.innerHTML = `EUR: ${displayVal / json.rates.USD}`;
+    }
+
+    //getFiatRates();
+
+
+    const getCryptoRates = async () => {
+      const res = await fetch('https://api.coinmarketcap.com/v2/ticker/')
+      const json = await res.json();
+      let btcValue = json.data['1']['quotes']['USD']['price']
+      btcValue = 1 / btcValue
+      btcBox.innerHTML += btcValue * displayVal;
+    }
+
+    //getCryptoRates();
+
+
     // You can also require other files to run in this process
     require('./renderer.js')
   </script>

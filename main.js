@@ -7,8 +7,8 @@ let mainWindow
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 215, height: 400 })
-  mainWindow.setResizable(false);
+  mainWindow = new BrowserWindow({ width: 415, height: 400 })
+  //mainWindow.setResizable(false);
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
 
